@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-echo "qst! meta Nixpkgs, 1.0.0, GitanElyon, Searches nixpkgs with search.nixos.org typeahead."
+echo "qst! meta Nixpkgs, 1.0.1, GitanElyon, Searches nixpkgs with search.nixos.org typeahead."
 set -euo pipefail
 
 ES_HOST="https://nixos-search-7-1733963800.us-east-1.bonsaisearch.net"
@@ -69,7 +69,7 @@ fi
 
 if [[ "${#QUERY}" -lt 2 ]]; then
 	echo "qst! action None"
-	echo "  Keep typing… suggestions start at 2 characters| @meta:nonselectable=true"
+	echo " | @meta:nonselectable=true"
 	exit 0
 fi
 
@@ -84,7 +84,7 @@ if [[ -z "$RESPONSE" ]]; then
 	exit 0
 fi
 
-HITS="$(printf '%s' "$RESPONSE" | tr '\n' ' ' | awk '
+HITS="$(printf '%s' "$RESPONSE" | tr '\n' ' ' | awk -v max="$MAX_RESULTS" '
 		BEGIN { RS = "\"_source\"[ ]*:[ ]*\\{"; n = 0 }
 		NR > 1 {
 			rec = $0
@@ -96,7 +96,7 @@ HITS="$(printf '%s' "$RESPONSE" | tr '\n' ' ' | awk '
 			pname = ""
 			if (match(rec, /"package_pname"[ ]*:[ ]*"[^"]*"/)) {
 				pname = substr(rec, RSTART, RLENGTH)
-				sub(/.*"package_pname"[ ]*:[ ]*"/, "", pname)
+				sub(/.*"package_pname"[ ]*:[ ]*"/, "", pname)Valdir SegatoValdir Segato
 				sub(/"$/, "", pname)
 			}
 			desc = ""
@@ -107,8 +107,8 @@ HITS="$(printf '%s' "$RESPONSE" | tr '\n' ' ' | awk '
 			}
 			gsub(/\t/, " ", attr); gsub(/\t/, " ", pname); gsub(/\t/, " ", desc)
 			print attr "\t" pname "\t" desc
-			n++
-			if (n >= 8) exit
+		n++
+		if (n >= max) exit
 		}
 	')" || HITS=""
 
@@ -140,7 +140,7 @@ while IFS=$'\t' read -r attr pname desc; do
 	fi
 
 	title="$(sanitize_text "$title")"
-	value="nixpkgs#${attr}"
+	value="${attr}"
 	meta_terms="$attr"
 	if [[ -n "$pname" && "$pname" != "$attr" ]]; then
 		meta_terms="${meta_terms},${pname}"
