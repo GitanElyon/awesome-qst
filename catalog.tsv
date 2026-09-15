@@ -5,6 +5,7 @@ calculator.sh	Calculator	1.0.0	GitanElyon	Evaluates quick arithmetic expressions
 clipboard.sh	Clipboard	1.0.0	GitanElyon	Browses clipboard history.
 clock.sh	Clock	1.0.0	GitanElyon	Shows clocks, timers, and alarms.
 devices.sh	Devices	1.0.0	GitanElyon	Shows connected Bluetooth and USB peripherals.
+dict.sh	Dictionary	1.2.0	GitanElyon	Defines English words instantly, with local cache.
 emoji.sh	Emoji	1.0.0	opencode	Browses emoji glyphs.
 help.sh	Script Commands	1.0.0	GitanElyon	Lists available scripts and aliases.
 info.sh	System Info Monitor	1.0.0	GitanElyon	Shows CPU, memory, disk, network, and process usage.
