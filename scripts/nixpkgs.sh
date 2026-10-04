@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-echo "qst! meta Nixpkgs, 1.0.1, GitanElyon, Searches nixpkgs with search.nixos.org typeahead."
+echo "qst! meta Nixpkgs, 1.1.0, GitanElyon, Searches nixpkgs with search.nixos.org typeahead."
 set -euo pipefail
 
 ES_HOST="https://nixos-search-7-1733963800.us-east-1.bonsaisearch.net"
@@ -51,9 +51,30 @@ strip_html() {
 	printf '%s' "$1" | sed -e 's/<[^>]*>/ /g' -e 's/  */ /g'
 }
 
-echo "qst! title  Nixpkgs (${CHANNEL}) "
+render_help() {
+	echo "qst! title  Nixpkgs Help "
+	echo "qst! action None"
+	echo "  nixpkgs <query>       search packages| @meta:nonselectable=true"
+	echo "  nixpkgs v <query>     show package versions instead of descriptions| @meta:nonselectable=true"
+	echo "  nixpkgs h             show this help| @meta:nonselectable=true"
+}
 
 QUERY="$(trim "$RAW_QUERY")"
+
+case "$QUERY" in
+	h|help)
+		render_help
+		exit 0
+		;;
+esac
+
+MODE="search"
+if [[ "$QUERY" == v\ * ]]; then
+	MODE="version"
+	QUERY="$(trim "${QUERY#v }")"
+fi
+
+echo "qst! title  Nixpkgs (${CHANNEL}) "
 
 if ! command -v curl >/dev/null 2>&1; then
 	echo "qst! action None"
@@ -74,7 +95,7 @@ if [[ "${#QUERY}" -lt 2 ]]; then
 fi
 
 ESCAPED_QUERY="$(json_escape "$QUERY")"
-REQUEST_BODY="$(printf '{"from":0,"size":%s,"_source":["type","package_attr_name","package_pname","package_description"],"query":{"bool":{"filter":[{"term":{"type":"package"}}],"must":[{"multi_match":{"query":"%s","type":"best_fields","operator":"and","fields":["package_attr_name.edge^4","package_pname.edge^3","package_description.edge^0.5"]}}]}}}' "$MAX_RESULTS" "$ESCAPED_QUERY")"
+REQUEST_BODY="$(printf '{"from":0,"size":%s,"_source":["type","package_attr_name","package_pname","package_description","package_pversion"],"query":{"bool":{"filter":[{"term":{"type":"package"}}],"must":[{"multi_match":{"query":"%s","type":"best_fields","operator":"and","fields":["package_attr_name.edge^4","package_pname.edge^3","package_description.edge^0.5"]}}]}}}' "$MAX_RESULTS" "$ESCAPED_QUERY")"
 
 RESPONSE="$(curl -sf --max-time "$CURL_TIMEOUT" -u "${ES_USER}:${ES_PASS}" -H 'Content-Type: application/json' -d "$REQUEST_BODY" "${ES_HOST}/latest-${SCHEMA_VERSION}-${BRANCH}/_search" 2>/dev/null)" || RESPONSE=""
 
@@ -96,7 +117,7 @@ HITS="$(printf '%s' "$RESPONSE" | tr '\n' ' ' | awk -v max="$MAX_RESULTS" '
 			pname = ""
 			if (match(rec, /"package_pname"[ ]*:[ ]*"[^"]*"/)) {
 				pname = substr(rec, RSTART, RLENGTH)
-				sub(/.*"package_pname"[ ]*:[ ]*"/, "", pname)Valdir SegatoValdir Segato
+				sub(/.*"package_pname"[ ]*:[ ]*"/, "", pname)
 				sub(/"$/, "", pname)
 			}
 			desc = ""
@@ -105,8 +126,14 @@ HITS="$(printf '%s' "$RESPONSE" | tr '\n' ' ' | awk -v max="$MAX_RESULTS" '
 				sub(/.*"package_description"[ ]*:[ ]*"/, "", desc)
 				sub(/"$/, "", desc)
 			}
-			gsub(/\t/, " ", attr); gsub(/\t/, " ", pname); gsub(/\t/, " ", desc)
-			print attr "\t" pname "\t" desc
+			ver = ""
+			if (match(rec, /"package_pversion"[ ]*:[ ]*"[^"]*"/)) {
+				ver = substr(rec, RSTART, RLENGTH)
+				sub(/.*"package_pversion"[ ]*:[ ]*"/, "", ver)
+				sub(/"$/, "", ver)
+			}
+			gsub(/\t/, " ", attr); gsub(/\t/, " ", pname); gsub(/\t/, " ", desc); gsub(/\t/, " ", ver)
+			print attr "\t" pname "\t" desc "\t" ver
 		n++
 		if (n >= max) exit
 		}
@@ -120,10 +147,11 @@ fi
 
 echo "qst! action CopyToClipboard,ExitApp"
 
-while IFS=$'\t' read -r attr pname desc; do
+while IFS=$'\t' read -r attr pname desc ver; do
 	[[ -z "$attr" ]] && continue
 	attr="$(trim "$attr")"
 	pname="$(trim "$pname")"
+	ver="$(trim "$ver")"
 	desc="$(json_unescape "$desc")"
 	desc="$(strip_html "$desc")"
 	desc="$(trim "$desc")"
@@ -135,7 +163,11 @@ while IFS=$'\t' read -r attr pname desc; do
 	if [[ -n "$pname" && "$pname" != "$attr" ]]; then
 		title="${title} · ${pname}"
 	fi
-	if [[ -n "$desc" ]]; then
+	if [[ "$MODE" == "version" ]]; then
+		if [[ -n "$ver" ]]; then
+			title="${title} — ${ver}"
+		fi
+	elif [[ -n "$desc" ]]; then
 		title="${title} — ${desc}"
 	fi
 

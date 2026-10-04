@@ -12,7 +12,7 @@ info.sh	System Info Monitor	1.0.0	GitanElyon	Shows CPU, memory, disk, network, a
 ip.sh	IP Info	1.0.0	GitanElyon	Shows public IP, local IPs, interfaces, and DNS info.
 loader.sh	Script Loader	2.1.0	GitanElyon	Browses and installs awesome-qst scripts.
 media.sh	Media	1.0.0	GitanElyon	Control currently playing media.
-nixpkgs.sh	Nixpkgs	1.0.1	GitanElyon	Searches nixpkgs with search.nixos.org typeahead.
+nixpkgs.sh	Nixpkgs	1.1.0	GitanElyon	Searches nixpkgs with search.nixos.org typeahead.
 runner.sh	Run Command	1.0.0	GitanElyon	Runs an arbitrary shell command.
 search.sh	Web Search	1.1.0	GitanElyon	Searches the web in your default browser.
 sudo.sh	Sudo	1.0.0	GitanElyon	Runs commands with elevated privileges.
