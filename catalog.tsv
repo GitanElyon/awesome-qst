@@ -15,6 +15,7 @@ media.sh	Media	1.0.0	GitanElyon	Control currently playing media.
 nixpkgs.sh	Nixpkgs	1.1.0	GitanElyon	Searches nixpkgs with search.nixos.org typeahead.
 runner.sh	Run Command	1.0.0	GitanElyon	Runs an arbitrary shell command.
 search.sh	Web Search	1.1.0	GitanElyon	Searches the web in your default browser.
+string.sh	String Analyzer	1.0.0	GitanElyon	Analyzes pasted text: characters, words, sentences, and more.
 sudo.sh	Sudo	1.0.0	GitanElyon	Runs commands with elevated privileges.
 symbols.sh	Symbols	2.0.0	GitanElyon	Browses Nerd Fonts symbols.
 system.sh	System Power	1.0.0	GitanElyon	Reboots, powers off, or suspends the computer.
