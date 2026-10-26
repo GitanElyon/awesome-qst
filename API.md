@@ -62,6 +62,24 @@ echo "qst! item  todo h             show this help|todo h|None @meta:nonselectab
 
 See `clock.sh` and `todo.sh` for the full layouts.
 
+## Styled labels
+
+Rows, titles, and messages can be styled with `@meta:fg` and `@meta:bg`, plus the text modifiers `@meta:bold`, `@meta:dim`, `@meta:italic`, `@meta:underline`, `@meta:strikethrough`, and `@meta:reversed`. Colors accept `#rrggbb`, `#rrggbbaa`, or names like `red`. Styling applies to the visible label only, so centered content stays centered and styled labels keep their look while selected. Use `@meta:fill=<color>` to set a background across the whole row instead; a label `bg` overrides it on the label. A status script can map each row's color to its severity:
+
+```bash
+#!/usr/bin/env bash
+echo "qst! title  Service Health @meta:bold=true"
+echo "qst! action CopyToClipboard,ExitApp"
+
+echo "qst! item  api      * up|api @meta:fg=green"
+echo "qst! item  worker   * degraded|worker @meta:fg=yellow @meta:bold=true"
+echo "qst! item  cache    * down|cache @meta:fg=red @meta:bold=true @meta:reversed=true"
+echo "qst! item  legacy   * retiring|legacy @meta:dim=true @meta:strikethrough=true"
+echo "qst! item  maintenance tonight|maintenance @meta:fill=#332200 @meta:fg=#ffcc00 @meta:nonselectable=true"
+```
+
+Colors and modifiers combine freely, and `@meta:fg`/`@meta:bg` work anywhere a label is shown.
+
 ## Copy to clipboard and exit
 
 A single row action can combine copy and exit so one `Enter` does the whole job. The emoji browser uses `CopyToClipboard,ExitApp` as its default action:

@@ -40,48 +40,18 @@ loader i <script>
 
 A full updated list of scripts, authors, versions and descriptions can be found in [catalog.tsv](catalog.tsv)
 
-- `battery.sh`
-  - Battery status and power information.
-- `bluetooth.sh`
-  - Bluetooth device discovery and management.
-- `brightness.sh`
-  - Screen brightness inspection and adjustment.
-- `calculator.sh`
-  - Expression evaluation for quick calculations.
-- `clipboard.sh`
-  - Clipboard history browser and writer.
-- `clock.sh`
-  - Clock, timers, and stopwatch functionality.
-- `devices.sh`
-  - Hardware device inspection and management.
-- `emoji.sh`
-  - Emoji browser for fast lookup and copying.
-- `help.sh`
-  - Script catalog with aliases and metadata.
-- `info.sh`
-  - System information and status overview.
-- `ip.sh`
-  - IP address and network information.
-- `loader.sh`
-  - Script installation and management helper.
-- `media.sh`
-  - Control currently playing media via playerctl (MPRIS).
-- `runner.sh`
-  - Shell command launcher.
-- `search.sh`
-  - Web search helper that opens the default browser.
-- `sudo.sh`
-  - Privileged command runner.
-- `symbols.sh`
-  - Nerd Font symbol browser for fast copying.
-- `system.sh`
-  - System control actions like shutdown and reboot.
-- `todo.sh`
-  - Simple task list manager.
-- `volume.sh`
-  - Audio volume inspection and adjustment.
-- `weather.sh`
-  - Current weather and three-day forecast for your area.
+Some commonly used scripts include:
+- `bluetooth.sh` - Bluetooth device discovery and management.
+- `calculator.sh` - Expression evaluation for quick calculations.
+- `clipboard.sh` - Clipboard history browser and writer.
+- `emoji.sh` - Emoji browser for fast lookup and copying.
+- `loader.sh` - Script installation and management helper.
+- `media.sh` - Control currently playing media via playerctl (MPRIS).
+- `runner.sh` - Shell command launcher.
+- `symbols.sh` - Nerd Font symbol browser for fast copying.
+- `todo.sh` - Simple task list manager.
+- `weather.sh` - Current weather and three-day forecast for your area.
+
 
 ## Aliases
 
