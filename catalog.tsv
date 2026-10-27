@@ -9,6 +9,7 @@ devices.sh	Devices	1.0.0	GitanElyon	Shows connected Bluetooth and USB peripheral
 dict.sh	Dictionary	1.2.0	GitanElyon	Defines English words instantly, with local cache.
 emoji.sh	Emoji	1.0.0	opencode	Browses emoji glyphs.
 help.sh	Script Commands	1.0.0	GitanElyon	Lists available scripts and aliases.
+hyprpaper.sh	Hyprpaper	1.0.0	GitanElyon	Manages wallpapers with hyprpaper: browse cycle random and fit modes.
 info.sh	System Info Monitor	1.0.0	GitanElyon	Shows CPU, memory, disk, network, and process usage.
 ip.sh	IP Info	1.0.0	GitanElyon	Shows public IP, local IPs, interfaces, and DNS info.
 loader.sh	Script Loader	2.1.0	GitanElyon	Browses and installs awesome-qst scripts.
