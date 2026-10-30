@@ -21,6 +21,6 @@ string.sh	String Analyzer	1.0.0	GitanElyon	Analyzes pasted text: characters, wor
 sudo.sh	Sudo	1.0.0	GitanElyon	Runs commands with elevated privileges.
 symbols.sh	Symbols	2.0.0	GitanElyon	Browses Nerd Fonts symbols.
 system.sh	System Power	1.0.0	GitanElyon	Reboots, powers off, or suspends the computer.
-todo.sh	Todo	1.0.1	GitanElyon	Manages a simple todo list.
+todo.sh	Todo	1.0.2	GitanElyon	Manages a simple todo list.
 volume.sh	Volume	1.0.0	GitanElyon	Adjusts audio volume.
 weather.sh	Weather	1.0.0	GitanElyon	Shows current weather and forecast for your area.

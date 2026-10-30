@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-echo "qst! meta Todo, 1.0.1, GitanElyon, Manages a simple todo list."
+echo "qst! meta Todo, 1.0.2, GitanElyon, Manages a simple todo list."
 set -euo pipefail
 
 SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
@@ -228,10 +228,13 @@ item_label() {
 	fi
 }
 
+# ResetPrompt alone can reuse qst's cached script frame, so the checked/updated
+# state would not appear until something else triggered a rerun. RefreshResults
+# after it forces a fresh run once the Execute command has finished writing.
 emit_item() {
 	local title="$1"
 	local value="$2"
-	local action="${3:-Execute,ResetPrompt}"
+	local action="${3:-Execute,ResetPrompt,RefreshResults}"
 	local meta="${4:-}"
 	title="$(sanitize_text "$title")"
 	if [[ -n "$meta" ]]; then
@@ -244,16 +247,16 @@ emit_item() {
 emit_preview_item() {
 	local title="$1"
 	local value="$2"
-	local action="${3:-Execute,ResetPrompt}"
+	local action="${3:-Execute,ResetPrompt,RefreshResults}"
 	emit_item "$title" "$value" "$action"
 }
 
 emit_all_items_browse() {
 	echo "qst! title  Todo @meta:fuzzy=true"
-	echo "qst! action Execute,ResetPrompt"
+	echo "qst! action Execute,ResetPrompt,RefreshResults"
 	while IFS=$'\t' read -r id status urgent created updated text; do
 		[[ -z "${id:-}" ]] && continue
-		emit_item "$(item_label "$status" "$urgent" "$text")" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt"
+		emit_item "$(item_label "$status" "$urgent" "$text")" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt,RefreshResults"
 	done < <(read_records)
 }
 
@@ -269,7 +272,7 @@ emit_fuzzy_matches() {
 	local mode="$1"
 	local query="$2"
 	local title="Todo"
-	local action="Execute,ResetPrompt"
+	local action="Execute,ResetPrompt,RefreshResults"
 	case "$mode" in
 		c) title="Todo Check" ;;
 		r) title="Todo Remove" ;;
@@ -302,13 +305,13 @@ emit_fuzzy_matches() {
 		display="$(item_label "$status" "$urgent" "$text")"
 		case "$mode" in
 			c)
-				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt"
+				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt,RefreshResults"
 				;;
 			r)
-				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply remove "$id")" "Execute,ResetPrompt"
+				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply remove "$id")" "Execute,ResetPrompt,RefreshResults"
 				;;
 			u)
-				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply urgent "$id")" "Execute,ResetPrompt"
+				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply urgent "$id")" "Execute,ResetPrompt,RefreshResults"
 				;;
 			s)
 				emit_item "$display" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "None"
@@ -327,21 +330,21 @@ emit_fuzzy_matches() {
 emit_add_mode() {
 	local item_text="$1"
 	echo "qst! title  Todo Add "
-	echo "qst! action Execute,ResetPrompt"
-	emit_preview_item "[ ] Add: $(sanitize_text "$item_text")" "$(quote_shell_args "$SCRIPT_PATH" _apply add "$(b64_encode "$item_text")")" "Execute,ResetPrompt"
+	echo "qst! action Execute,ResetPrompt,RefreshResults"
+	emit_preview_item "[ ] Add: $(sanitize_text "$item_text")" "$(quote_shell_args "$SCRIPT_PATH" _apply add "$(b64_encode "$item_text")")" "Execute,ResetPrompt,RefreshResults"
 	while IFS=$'\t' read -r id status urgent created updated text; do
 		[[ -z "${id:-}" ]] && continue
-		emit_item "$(item_label "$status" "$urgent" "$text")" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt"
+		emit_item "$(item_label "$status" "$urgent" "$text")" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt,RefreshResults"
 	done < <(read_records)
 }
 
 emit_clear_mode() {
 	echo "qst! title  Todo Clear "
-	echo "qst! action Execute,ResetPrompt"
-	emit_preview_item "[!] Clear all todo items" "$(quote_shell_args "$SCRIPT_PATH" _apply clear)" "Execute,ResetPrompt"
+	echo "qst! action Execute,ResetPrompt,RefreshResults"
+	emit_preview_item "[!] Clear all todo items" "$(quote_shell_args "$SCRIPT_PATH" _apply clear)" "Execute,ResetPrompt,RefreshResults"
 	while IFS=$'\t' read -r id status urgent created updated text; do
 		[[ -z "${id:-}" ]] && continue
-		emit_item "$(item_label "$status" "$urgent" "$text")" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt"
+		emit_item "$(item_label "$status" "$urgent" "$text")" "$(quote_shell_args "$SCRIPT_PATH" _apply check "$id")" "Execute,ResetPrompt,RefreshResults"
 	done < <(read_records)
 }
 
@@ -372,8 +375,8 @@ emit_edit_save() {
 	fi
 	IFS=$'\t' read -r id status urgent created updated old_text <<< "$record"
 	echo "qst! title  Todo Edit "
-	echo "qst! action Execute,ResetPrompt"
-	echo "qst! item  Save: $(sanitize_text "$old_text") -> $(sanitize_text "$new_text")|$(quote_shell_args "$SCRIPT_PATH" _apply edit "$target_id" "$(b64_encode "$new_text")")|Execute,ResetPrompt"
+	echo "qst! action Execute,ResetPrompt,RefreshResults"
+	echo "qst! item  Save: $(sanitize_text "$old_text") -> $(sanitize_text "$new_text")|$(quote_shell_args "$SCRIPT_PATH" _apply edit "$target_id" "$(b64_encode "$new_text")")|Execute,ResetPrompt,RefreshResults"
 	echo "  Current state: $(item_label "$status" "$urgent" "$old_text") | created: ${created} | updated: ${updated}|"
 }
 
